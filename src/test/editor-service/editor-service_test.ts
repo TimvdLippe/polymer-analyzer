@@ -41,25 +41,29 @@ function editorTests(editorFactory: (basedir: string) => EditorService) {
       {
         tagname: 'behavior-test-elem',
         description: 'An element to test out behavior inheritance.',
-        expandTo: undefined
+        expandTo: undefined,
+        replacementPrefix: '<'
       },
-      {description: '', tagname: 'class-declaration', expandTo: undefined},
-      {description: '', tagname: 'anonymous-class', expandTo: undefined},
-      {description: '', tagname: 'class-expression', expandTo: undefined},
+      {description: '', tagname: 'class-declaration', expandTo: undefined, replacementPrefix: '<'},
+      {description: '', tagname: 'anonymous-class', expandTo: undefined, replacementPrefix: '<'},
+      {description: '', tagname: 'class-expression', expandTo: undefined, replacementPrefix: '<'},
       {
         description: '',
         tagname: 'register-before-declaration',
-        expandTo: undefined
+        expandTo: undefined,
+        replacementPrefix: '<'
       },
       {
         description: '',
         tagname: 'register-before-expression',
-        expandTo: undefined
+        expandTo: undefined,
+        replacementPrefix: '<'
       },
       {
         description: 'This is a description of WithObservedAttributes.',
         tagname: 'vanilla-with-observed-attributes',
-        expandTo: undefined
+        expandTo: undefined,
+        replacementPrefix: '<'
       },
     ]
   };
@@ -79,6 +83,13 @@ function editorTests(editorFactory: (basedir: string) => EditorService) {
         return copy;
       });
 
+  const emptyStartElementTypeaheadWithNoPrefix = Object.assign({}, emptyStartElementTypeahead);
+  emptyStartElementTypeaheadWithNoPrefix.elements =
+    emptyStartElementTypeaheadWithNoPrefix.elements.map(e => {
+      let copy = Object.assign({}, e);
+      copy.replacementPrefix = '';
+      return copy;
+    });
   const attributeTypeahead: AttributesCompletion = {
     kind: 'attributes',
     attributes: [
@@ -248,7 +259,7 @@ function editorTests(editorFactory: (basedir: string) => EditorService) {
       deepEqual(
           await editorService.getTypeaheadCompletionsAtPosition(
               indexFile, {line: 0, column: 0}),
-          emptyStartElementTypeahead);
+          emptyStartElementTypeaheadWithNoPrefix);
     });
 
     test('Get element completions for a start tag.', async() => {
@@ -257,6 +268,17 @@ function editorTests(editorFactory: (basedir: string) => EditorService) {
           await editorService.getTypeaheadCompletionsAtPosition(
               indexFile, tagPosition),
           elementTypeahead);
+    });
+
+    test('Get element completions for a start tag without preceding <.', async() => {
+      await editorService.fileChanged(indexFile, indexContents);
+      const incompleteText = `behav`;
+      editorService.fileChanged(
+          indexFile, `${incompleteText}\n${indexContents}`);
+      deepEqual(
+          await editorService.getTypeaheadCompletionsAtPosition(
+              indexFile, tagPosition),
+          emptyStartElementTypeaheadWithNoPrefix);
     });
 
     test('Gets element completions with an incomplete tag', async() => {

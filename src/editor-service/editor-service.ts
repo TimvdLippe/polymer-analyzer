@@ -17,7 +17,7 @@ import {Warning} from '../warning/warning';
 export type TypeaheadCompletion = ElementCompletion | AttributesCompletion;
 export interface ElementCompletion {
   kind: 'element-tags';
-  elements: {tagname: string, description: string, expandTo?: string}[];
+  elements: {tagname: string, description: string, expandTo?: string, replacementPrefix: string}[];
 }
 export interface AttributesCompletion {
   kind: 'attributes';

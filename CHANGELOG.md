@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+* Add replacementPrefix information for text type ahead completions.
+
 ### Fixed
 * [Polymer] A number of fixes around warnings when resolving behaviors
   * Warn, don't throw when a behavior is declared twice.

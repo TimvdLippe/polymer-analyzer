@@ -75,7 +75,8 @@ export class LocalEditorService extends EditorService {
             description: e.description,
             expandTo: location.kind === 'text' ?
                 `<${e.tagName}${attributesSpace}></${e.tagName}>` :
-                undefined
+                undefined,
+            replacementPrefix: location.kind === 'text' ? '' : '<'
           };
         })
       };
